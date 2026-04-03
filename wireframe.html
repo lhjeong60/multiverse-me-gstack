@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiverse Me - Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0a0a0f; color: #e0e0e0; }
+
+  .screen {
+    width: 390px;
+    min-height: 700px;
+    margin: 40px auto;
+    border: 1px solid #2a2a3a;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: #0d0d15;
+  }
+  .screen-label {
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+    margin-top: 20px;
+    margin-bottom: -20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Screen 1: Landing */
+  .landing {
+    padding: 60px 30px 40px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #1a1a2e 0%, #0d0d15 70%);
+  }
+  .landing h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .landing .subtitle {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 40px;
+  }
+  .photo-upload {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 2px dashed #4a4a6a;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  }
+  .photo-upload:hover { border-color: #a78bfa; }
+  .photo-upload .icon { font-size: 32px; margin-bottom: 8px; }
+  .photo-upload .text { font-size: 12px; color: #666; }
+  .name-input {
+    width: 100%;
+    padding: 14px 20px;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 20px;
+    outline: none;
+  }
+  .name-input::placeholder { color: #555; }
+  .cta-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer { to { left: 100%; } }
+
+  /* Screen 2: Branching Question */
+  .branching {
+    padding: 50px 24px 40px;
+    background: #0d0d15;
+    position: relative;
+  }
+  .branching::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 200px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.15) 0%, transparent 70%);
+  }
+  .branch-progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .branch-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2a2a3a;
+  }
+  .branch-dot.active { background: #7c3aed; box-shadow: 0 0 8px #7c3aed; }
+  .branch-dot.done { background: #34d399; }
+  .branch-question {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .branch-option {
+    padding: 20px;
+    border: 1px solid #2a2a3a;
+    border-radius: 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .branch-option:hover {
+    border-color: #7c3aed;
+    background: rgba(124,58,237,0.05);
+  }
+  .branch-option .opt-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .branch-option .opt-desc {
+    font-size: 13px;
+    color: #888;
+  }
+  /* Glitch line decoration */
+  .glitch-line {
+    position: absolute;
+    right: 20px; top: 50%;
+    width: 3px; height: 60%;
+    transform: translateY(-50%);
+    background: linear-gradient(180deg, transparent, #7c3aed, #3b82f6, transparent);
+    opacity: 0.3;
+  }
+
+  /* Screen 3: Universe Reveal */
+  .reveal {
+    padding: 0;
+    background: #0d0d15;
+  }
+  .reveal-image {
+    width: 100%;
+    height: 340px;
+    background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .reveal-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 100px;
+    background: linear-gradient(transparent, #0d0d15);
+  }
+  .reveal-image .placeholder {
+    font-size: 48px;
+    opacity: 0.3;
+  }
+  .universe-badge {
+    position: absolute;
+    top: 16px; left: 16px;
+    padding: 6px 14px;
+    background: rgba(124,58,237,0.8);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+  }
+  .reveal-content {
+    padding: 24px;
+  }
+  .reveal-content h2 {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .reveal-content .universe-name {
+    font-size: 14px;
+    color: #a78bfa;
+    margin-bottom: 16px;
+  }
+  .reveal-content .story {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #aaa;
+    margin-bottom: 24px;
+  }
+  .nav-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .nav-dot {
+    width: 28px; height: 4px;
+    border-radius: 2px;
+    background: #2a2a3a;
+  }
+  .nav-dot.active { background: #7c3aed; }
+  .next-universe-btn {
+    width: calc(100% - 48px);
+    margin: 0 24px 24px;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid #3a3a5a;
+    border-radius: 12px;
+    color: #e0e0e0;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* Screen 4: Results Overview */
+  .results {
+    padding: 40px 20px 30px;
+    background: #0d0d15;
+  }
+  .results h2 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .results .name-highlight {
+    text-align: center;
+    font-size: 14px;
+    color: #a78bfa;
+    margin-bottom: 24px;
+  }
+  .universe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .universe-card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #2a2a3a;
+  }
+  .universe-card .card-img {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .universe-card:nth-child(1) .card-img { background: linear-gradient(135deg, #1a1a2e, #2d1b4e); }
+  .universe-card:nth-child(2) .card-img { background: linear-gradient(135deg, #1a2e1a, #1b4e2d); }
+  .universe-card:nth-child(3) .card-img { background: linear-gradient(135deg, #2e1a1a, #4e1b1b); }
+  .universe-card:nth-child(4) .card-img { background: linear-gradient(135deg, #1a2e2e, #1b3d4e); }
+  .universe-card:nth-child(5) .card-img { background: linear-gradient(135deg, #2e2e1a, #4e4e1b); }
+  .universe-card .card-info {
+    padding: 10px;
+  }
+  .universe-card .card-info .card-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .universe-card .card-info .card-sub {
+    font-size: 11px;
+    color: #888;
+  }
+  .share-section {
+    text-align: center;
+  }
+  .share-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #3b82f6);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+  .share-sub {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+  .share-sub button {
+    padding: 10px 20px;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3a;
+    border-radius: 10px;
+    color: #ccc;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .try-cta {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #1a1a2a;
+    font-size: 14px;
+    color: #888;
+  }
+  .try-cta a {
+    color: #a78bfa;
+    text-decoration: underline;
+  }
+
+  /* Design annotations */
+  .annotation {
+    background: #1a1a0a;
+    border-left: 3px solid #fbbf24;
+    padding: 8px 12px;
+    margin: 12px 20px;
+    font-size: 11px;
+    color: #aaa;
+    border-radius: 0 8px 8px 0;
+  }
+</style>
+</head>
+<body>
+  <p class="screen-label">Screen 1: Landing</p>
+  <div class="screen">
+    <div class="landing">
+      <h1>Multiverse Me</h1>
+      <p class="subtitle">평행세계의 나를 만나보세요</p>
+
+      <div class="photo-upload">
+        <span class="icon">+</span>
+        <span class="text">사진 업로드</span>
+      </div>
+
+      <input class="name-input" type="text" placeholder="이름을 입력하세요" value="김지현">
+
+      <button class="cta-btn">내 멀티버스 열기</button>
+
+      <div class="annotation">
+        <!-- 트랜지션: 버튼 클릭 시 화면이 글리치되며 차원이 열리는 연출 -->
+        TRANSITION: 버튼 클릭 → 글리치 이펙트 → 포탈 오픈 애니메이션 → 분기점 질문으로
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label">Screen 2: Branching Question (2/3)</p>
+  <div class="screen">
+    <div class="branching">
+      <div class="glitch-line"></div>
+
+      <div class="branch-progress">
+        <div class="branch-dot done"></div>
+        <div class="branch-dot active"></div>
+        <div class="branch-dot"></div>
+      </div>
+
+      <div class="branch-question">
+        10년 전 그날,<br>
+        다른 선택을 했다면?
+      </div>
+
+      <div class="branch-option">
+        <div class="opt-title">그 비행기를 탔다</div>
+        <div class="opt-desc">낯선 나라에서 새로운 삶이 시작된다</div>
+      </div>
+
+      <div class="branch-option">
+        <div class="opt-title">남아서 버텼다</div>
+        <div class="opt-desc">익숙한 곳에서 예상치 못한 일이 벌어진다</div>
+      </div>
+
+      <div class="branch-option">
+        <div class="opt-title">전혀 다른 길을 걸었다</div>
+        <div class="opt-desc">아무도 예측 못한 우주가 열린다</div>
+      </div>
+
+      <div class="annotation">
+        <!-- 선택 시 화면이 갈라지며 다음 질문 or 우주로 전환 -->
+        TRANSITION: 선택 → 화면이 수직으로 갈라지는 split 애니메이션 → 다음 분기점
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label">Screen 3: Universe Reveal</p>
+  <div class="screen">
+    <div class="reveal">
+      <div class="reveal-image">
+        <div class="universe-badge">Universe #3</div>
+        <span class="placeholder">AI Generated Portrait</span>
+      </div>
+
+      <div class="reveal-content">
+        <h2>해적선장 김지현</h2>
+        <p class="universe-name">카리브해 평행세계 / Universe of the Seven Seas</p>
+
+        <p class="story">
+          이 세계의 당신은 2019년 그 비행기를 탔습니다.
+          카리브해의 작은 섬에 불시착한 뒤, 현지 어부들과 함께
+          바다를 누비기 시작했죠. 5년 후, 당신은 카리브해에서
+          가장 유명한 보물 사냥꾼이 되어 있습니다...
+        </p>
+
+        <div class="nav-dots">
+          <div class="nav-dot"></div>
+          <div class="nav-dot"></div>
+          <div class="nav-dot active"></div>
+          <div class="nav-dot"></div>
+          <div class="nav-dot"></div>
+        </div>
+      </div>
+
+      <button class="next-universe-btn">다음 우주 보기 →</button>
+
+      <div class="annotation">
+        TRANSITION: 스와이프 or 버튼 → 포탈/워프 애니메이션으로 다음 우주로 점프.
+        사운드: 차원 이동 효과음 + 각 우주별 앰비언스
+      </div>
+    </div>
+  </div>
+
+  <p class="screen-label">Screen 4: Results Overview + Share</p>
+  <div class="screen">
+    <div class="results">
+      <h2>김지현의 멀티버스</h2>
+      <p class="name-highlight">5개의 평행세계를 발견했습니다</p>
+
+      <div class="universe-grid">
+        <div class="universe-card">
+          <div class="card-img">AI img</div>
+          <div class="card-info">
+            <div class="card-title">해적선장</div>
+            <div class="card-sub">카리브해 세계</div>
+          </div>
+        </div>
+        <div class="universe-card">
+          <div class="card-img">AI img</div>
+          <div class="card-info">
+            <div class="card-title">사이버 해커</div>
+            <div class="card-sub">네온시티 2089</div>
+          </div>
+        </div>
+        <div class="universe-card">
+          <div class="card-img">AI img</div>
+          <div class="card-info">
+            <div class="card-title">궁중 요리사</div>
+            <div class="card-sub">조선 세계</div>
+          </div>
+        </div>
+        <div class="universe-card">
+          <div class="card-img">AI img</div>
+          <div class="card-info">
+            <div class="card-title">우주 탐험가</div>
+            <div class="card-sub">은하연합 세계</div>
+          </div>
+        </div>
+        <div class="universe-card">
+          <div class="card-img">AI img</div>
+          <div class="card-info">
+            <div class="card-title">숲의 수호자</div>
+            <div class="card-sub">판타지 세계</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="share-btn">내 멀티버스 공유하기</button>
+
+      <div class="share-sub">
+        <button>카카오톡</button>
+        <button>인스타</button>
+        <button>X</button>
+      </div>
+
+      <div class="try-cta">
+        당신의 평행세계도 확인해보세요<br>
+        <a href="#">multiverseme.app</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

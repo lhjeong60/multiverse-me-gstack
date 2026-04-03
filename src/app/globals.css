@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a0a0c;
+  --surface: #141418;
+  --surface2: #1c1c22;
+  --border: #2a2a33;
+  --text-primary: #e8e8e1;
+  --text-secondary: #8a8890;
+  --accent: #ff6b35;
+  --accent-glow: rgba(255, 107, 53, 0.25);
+  --accent2: #c4a1ff;
+  --accent3: #35d0ba;
+  --error: #ef4444;
+  --success: #22c55e;
+
+  /* Universe Tier Colors */
+  --tier1: #d4a574;
+  --tier2: #dc2626;
+  --tier3: #f0abfc;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface2);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accent-glow);
+  --color-accent2: var(--accent2);
+  --color-accent3: var(--accent3);
+  --color-error: var(--error);
+  --color-success: var(--success);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Title gradient */
+.title-gradient {
+  background: linear-gradient(135deg, #e8e6e1 0%, #c4a1ff 50%, #ff6b35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glitch text effect */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+}
+
+.glitch-text {
+  animation: glitch 100ms infinite;
+}
+
+/* Portal glow */
+@keyframes portal-pulse {
+  0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+  50% { box-shadow: 0 0 40px var(--accent-glow), 0 0 60px var(--accent-glow); }
+}
+
+.portal-glow {
+  animation: portal-pulse 2s ease-in-out infinite;
+}
+
+/* Typing cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: "|";
+  animation: blink 800ms infinite;
+  color: var(--accent);
+}
+
+/* Shimmer for loading */
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Pulse slow for loading text */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
+}
+
+/* Clickable elements */
+button,
+[role="button"],
+a,
+input[type="file"] + label,
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glitch-text { animation: none; }
+  .portal-glow { animation: none; }
+  .pulse-slow { animation: none; }
+  body::after { display: none; }
+  * { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
