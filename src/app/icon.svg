@@ -12,10 +12,14 @@
   <rect width="512" height="512" rx="108" fill="#0a0a0c"/>
   <!-- 중앙 글로우 -->
   <circle cx="256" cy="256" r="160" fill="url(#glow)"/>
-  <!-- 굵은 포탈 링 -->
-  <circle cx="256" cy="256" r="160" fill="none" stroke="url(#g)" stroke-width="32" opacity="0.7"/>
+  <!-- 정14각형 외곽 링 (반지름 192 = 160×1.2) -->
+  <polygon points="256,64 339,83 406,136 443,213 443,299 406,376 339,429 256,448 173,429 106,376 69,299 69,213 106,136 173,83"
+           fill="none" stroke="url(#g)" stroke-width="20" stroke-linejoin="round" opacity="0.75"/>
+  <!-- 정10각형 내곽 링 (반지름 160) -->
+  <polygon points="256,96 350,127 408,207 408,305 350,385 256,416 162,385 104,305 104,207 162,127"
+           fill="none" stroke="url(#g)" stroke-width="20" stroke-linejoin="round" opacity="0.9"/>
   <!-- 균열 — 굵고 명확하게 -->
-  <path d="M256 80 L240 190 L272 240 L236 290 L270 340 L256 432" fill="none" stroke="url(#g)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 80 L240 190 L272 240 L236 290 L270 340 L256 432" fill="none" stroke="url(#g)" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
   <!-- 균열 중심 밝은 코어 -->
-  <path d="M256 80 L240 190 L272 240 L236 290 L270 340 L256 432" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  <path d="M256 80 L240 190 L272 240 L236 290 L270 340 L256 432" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
 </svg>

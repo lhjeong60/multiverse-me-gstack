@@ -11,7 +11,12 @@
   </defs>
   <rect width="180" height="180" rx="40" fill="#0a0a0c"/>
   <circle cx="90" cy="90" r="56" fill="url(#glow)"/>
-  <circle cx="90" cy="90" r="56" fill="none" stroke="url(#g)" stroke-width="12" opacity="0.7"/>
-  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  <!-- 정14각형 외곽 링 (반지름 67 = 56×1.2) -->
+  <polygon points="90,23 119,30 142,48 155,75 155,105 142,132 119,150 90,157 61,150 38,132 25,105 25,75 38,48 61,30"
+           fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round" opacity="0.75"/>
+  <!-- 정10각형 내곽 링 (반지름 56) -->
+  <polygon points="90,34 123,45 143,72 143,107 123,134 90,146 57,134 37,107 37,72 57,45"
+           fill="none" stroke="url(#g)" stroke-width="7" stroke-linejoin="round" opacity="0.9"/>
+  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="url(#g)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
 </svg>
