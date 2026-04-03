@@ -58,17 +58,18 @@ Deno.serve(async (req) => {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
-    // IP별 일일 사용량
-    const { count: ipCount } = await supabase
+    // IP + 이름 조합별 일일 사용량
+    const { count: ipNameCount } = await supabase
       .from("rate_limits")
       .select("*", { count: "exact", head: true })
       .eq("ip_address", clientIp)
+      .eq("name", sanitizedName)
       .gte("created_at", todayStart.toISOString());
 
-    if (!isLocalhost && (ipCount ?? 0) >= 3) {
+    if (!isLocalhost && (ipNameCount ?? 0) >= 3) {
       return new Response(
         JSON.stringify({
-          error: "오늘의 차원 점프를 모두 사용했습니다. 내일 다시 도전하세요.",
+          error: `${sanitizedName}님은 오늘의 차원 점프를 모두 사용했습니다. 내일 다시 도전하세요.`,
         }),
         { status: 429, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
@@ -90,7 +91,7 @@ Deno.serve(async (req) => {
     }
 
     // Rate limit 기록
-    await supabase.from("rate_limits").insert({ ip_address: clientIp });
+    await supabase.from("rate_limits").insert({ ip_address: clientIp, name: sanitizedName });
 
     // 1단계: 텍스트 생성 (우주 5개 설정 + 스토리 + 이미지 프롬프트)
     const universeTexts = await generateUniverseTexts(

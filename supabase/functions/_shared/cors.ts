@@ -1,5 +1,6 @@
 const ALLOWED_ORIGINS = [
   "https://multiverse-me.vercel.app",
+  "https://verse.newseouls.com",
   "http://localhost:3010",
 ];
 

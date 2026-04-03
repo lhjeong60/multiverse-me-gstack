@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
-import { VERSE_JUMP_1, VERSE_JUMP_2, TIER_DISTRIBUTION } from "@/lib/constants";
+import { getRandomChoices, TIER_DISTRIBUTION } from "@/lib/constants";
 import { getSession, setSession } from "@/lib/store";
 import type { VerseChoice } from "@/types";
 
@@ -13,6 +13,9 @@ export default function VerseJump() {
   const step = Number(params.step);
   const [selected, setSelected] = useState<number | null>(null);
   const [transitioning, setTransitioning] = useState(false);
+
+  // 매 step마다 랜덤 선택지 생성 (useMemo로 리렌더 시 유지)
+  const choices: VerseChoice[] = useMemo(() => getRandomChoices(), [step]);
 
   useEffect(() => {
     const session = getSession();
@@ -25,8 +28,6 @@ export default function VerseJump() {
     router.replace("/");
     return null;
   }
-
-  const choices: VerseChoice[] = step === 1 ? VERSE_JUMP_1 : VERSE_JUMP_2;
 
   function handleSelect(index: number) {
     if (selected !== null) return;
@@ -122,9 +123,11 @@ export default function VerseJump() {
             Verse Jump #{step}
           </p>
           <h2 className="text-[24px] font-[family-name:var(--font-instrument)] leading-tight">
-            차원을 넘기 위해
-            <br />
-            무엇을 하시겠습니까?
+            {step === 1 ? (
+              <>차원의 문이 흔들리고 있습니다.<br />균열을 넓히려면—</>
+            ) : (
+              <>균열이 더 깊어지고 있습니다.<br />한 번 더—</>
+            )}
           </h2>
         </motion.div>
 

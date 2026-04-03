@@ -11,6 +11,7 @@ function LoadingContent() {
   const searchParams = useSearchParams();
   const [messageIndex, setMessageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const hasStarted = useRef(false);
   const done = useRef(false);
 
@@ -78,19 +79,53 @@ function LoadingContent() {
         }
 
         const data = await res.json();
+        const resultId = data.result_id;
+
+        // 이미지 최소 1개 완료까지 polling 대기
+        const pollForFirstImage = async (): Promise<void> => {
+          const pollStart = Date.now();
+          const TIMEOUT = 120_000;
+          while (Date.now() - pollStart < TIMEOUT) {
+            await new Promise((r) => setTimeout(r, 2000));
+            try {
+              const pollRes = await fetch(`${supabaseUrl}/functions/v1/poll?id=${resultId}`);
+              if (!pollRes.ok) continue;
+              const pollData = await pollRes.json();
+              if (pollData.ready_count >= 1) return;
+            } catch {
+              // 재시도
+            }
+          }
+        };
+
+        await pollForFirstImage();
         done.current = true;
         setProgress(100);
-        // 100% 표시 후 살짝 대기 → reveal로 이동
-        await new Promise((r) => setTimeout(r, 500));
-        router.replace(`/reveal?id=${data.result_id}`);
+        await new Promise((r) => setTimeout(r, 400));
+        router.replace(`/reveal?id=${resultId}`);
       } catch (e) {
         console.error("Generate failed:", e);
-        router.replace("/");
+        done.current = true;
+        setError(e instanceof Error ? e.message : "차원 균열이 너무 심합니다.");
       }
     }
 
     generate();
   }, [router, score, tierDist]);
+
+  if (error) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-6 gap-4">
+        <p className="text-[16px] text-text-primary text-center">{error}</p>
+        <button
+          onClick={() => router.replace("/")}
+          className="px-6 py-3 rounded-full bg-gradient-to-br from-accent to-[#ff8f65] text-white text-[14px] font-medium"
+        >
+          돌아가기
+        </button>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden">

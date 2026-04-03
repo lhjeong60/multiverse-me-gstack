@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback, useRef } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -102,7 +102,22 @@ function RevealContent() {
     };
   }, [resultId, router]);
 
-  const currentUniverse = result?.universes[currentIndex];
+  // 이미지 완료 순 정렬: 이미지 있는 우주 먼저, 없는 우주 나중
+  const sortedIndices = useMemo(() => {
+    if (!result) return [];
+    // startIndex > 0이면 result에서 특정 우주 클릭해서 온 것 → 원래 순서 유지
+    if (startIndex > 0) return result.universes.map((_, i) => i);
+    const withImage: number[] = [];
+    const withoutImage: number[] = [];
+    result.universes.forEach((u, i) => {
+      if (u.image_url) withImage.push(i);
+      else withoutImage.push(i);
+    });
+    return [...withImage, ...withoutImage];
+  }, [result, startIndex]);
+
+  const actualIndex = sortedIndices[currentIndex] ?? 0;
+  const currentUniverse = result?.universes[actualIndex];
   const currentStory = currentUniverse?.story ?? "";
 
   // 타이핑 효과: story 텍스트와 index 변경에만 반응
@@ -259,14 +274,16 @@ function RevealContent() {
           </button>
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={() => router.push(`/result/${resultId}`)}
-            className="text-[12px] text-text-secondary hover:text-text-primary transition-colors"
-          >
-            결과 화면으로 돌아가기
-          </button>
-        </div>
+        {startIndex > 0 && (
+          <div className="text-center">
+            <button
+              onClick={() => router.push(`/result/${resultId}`)}
+              className="text-[12px] text-text-secondary hover:text-text-primary transition-colors"
+            >
+              결과 화면으로 돌아가기
+            </button>
+          </div>
+        )}
 
         {currentUniverse.image_url && (
           <div className="text-center pb-2">
