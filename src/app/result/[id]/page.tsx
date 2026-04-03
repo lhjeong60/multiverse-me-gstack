@@ -28,6 +28,7 @@ export default function ResultPage() {
   const [shareMessage, setShareMessage] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const pollStarted = useRef(false);
 
   useEffect(() => {
@@ -91,6 +92,12 @@ export default function ResultPage() {
     }
 
     load();
+
+    // 소유권 확인
+    try {
+      const owned = JSON.parse(sessionStorage.getItem("owned_results") || "[]");
+      setIsOwner(owned.includes(id));
+    } catch {}
 
     return () => {
       if (pollTimer) clearInterval(pollTimer);
@@ -387,16 +394,18 @@ export default function ResultPage() {
           </button>
         </div>
 
-        {/* 데이터 삭제 */}
-        <div className="text-center pb-6">
-          <button
-            onClick={handleDeleteAll}
-            disabled={deleting}
-            className="text-[12px] text-text-secondary border border-border/60 rounded-full px-4 py-1.5 hover:text-error hover:border-error/50 transition-colors disabled:opacity-50"
-          >
-            {deleting ? "삭제 중..." : "내 데이터 삭제하기"}
-          </button>
-        </div>
+        {/* 데이터 삭제 (소유자만) */}
+        {isOwner && (
+          <div className="text-center pb-6">
+            <button
+              onClick={handleDeleteAll}
+              disabled={deleting}
+              className="text-[12px] text-text-secondary border border-border/60 rounded-full px-4 py-1.5 hover:text-error hover:border-error/50 transition-colors disabled:opacity-50"
+            >
+              {deleting ? "삭제 중..." : "내 데이터 삭제하기"}
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

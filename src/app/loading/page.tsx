@@ -81,6 +81,13 @@ function LoadingContent() {
         const data = await res.json();
         const resultId = data.result_id;
 
+        // 소유권 마킹 (이 브라우저에서 생성한 결과)
+        try {
+          const owned = JSON.parse(sessionStorage.getItem("owned_results") || "[]");
+          owned.push(resultId);
+          sessionStorage.setItem("owned_results", JSON.stringify(owned));
+        } catch {};
+
         // 이미지 최소 1개 완료까지 polling 대기
         const pollForFirstImage = async (): Promise<void> => {
           const pollStart = Date.now();
