@@ -191,6 +191,16 @@ function RevealContent() {
     setCurrentIndex((prev) => prev - 1);
   }
 
+  // Universe#숫자 라벨: tier1=3자리, tier2=4자리, tier3=5자리 (hooks는 early return 전에)
+  const tierNumber = useMemo(() => {
+    if (!currentUniverse) return 0;
+    const digits = currentUniverse.tier === 1 ? 3 : currentUniverse.tier === 2 ? 4 : 5;
+    const min = Math.pow(10, digits - 1);
+    const max = Math.pow(10, digits) - 1;
+    return min + Math.floor(Math.random() * (max - min + 1));
+  }, [actualIndex, currentUniverse?.tier]);
+  const tierLabel = `Universe#${tierNumber}`;
+
   if (!result || !currentUniverse) {
     return (
       <main className="flex flex-1 items-center justify-center">
@@ -198,13 +208,6 @@ function RevealContent() {
       </main>
     );
   }
-
-  const tierLabel =
-    currentUniverse.tier === 1
-      ? "현실적"
-      : currentUniverse.tier === 2
-        ? "판타지"
-        : "기상천외";
 
   return (
     <main className="flex flex-1 flex-col relative overflow-hidden">
