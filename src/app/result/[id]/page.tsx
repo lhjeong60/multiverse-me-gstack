@@ -348,7 +348,8 @@ export default function ResultPage() {
           })}
         </div>
 
-        {/* Actions */}
+        {/* Actions (소유자만) */}
+        {isOwner && (
         <div className="flex flex-col gap-3">
           <button
             onClick={handleReJump}
@@ -380,6 +381,7 @@ export default function ResultPage() {
             </motion.p>
           )}
         </div>
+        )}
 
         {/* CTA for visitors */}
         <div className="text-center py-4 border-t border-border">

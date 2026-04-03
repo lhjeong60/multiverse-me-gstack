@@ -4,11 +4,14 @@
       <stop offset="0%" stop-color="#ff6b35"/>
       <stop offset="100%" stop-color="#c4a1ff"/>
     </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff6b35" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#ff6b35" stop-opacity="0"/>
+    </radialGradient>
   </defs>
   <rect width="180" height="180" rx="40" fill="#0a0a0c"/>
-  <circle cx="90" cy="90" r="62" fill="none" stroke="url(#g)" stroke-width="5" opacity="0.3"/>
-  <circle cx="90" cy="90" r="48" fill="none" stroke="url(#g)" stroke-width="3" opacity="0.5"/>
-  <path d="M90 36 L87 72 L93 85 L86 99 L94 113 L90 144" fill="none" stroke="url(#g)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="90" cy="90" r="14" fill="url(#g)" opacity="0.15"/>
-  <circle cx="90" cy="90" r="7" fill="url(#g)" opacity="0.3"/>
+  <circle cx="90" cy="90" r="56" fill="url(#glow)"/>
+  <circle cx="90" cy="90" r="56" fill="none" stroke="url(#g)" stroke-width="12" opacity="0.7"/>
+  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="url(#g)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M90 28 L84 67 L96 84 L83 102 L95 119 L90 152" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
 </svg>
