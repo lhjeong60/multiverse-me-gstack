@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { getUnlockedUniverses } from "@/lib/store";
 import type { Result, Universe } from "@/types";
 
 declare global {
@@ -26,7 +25,6 @@ export default function ResultPage() {
 
   const [result, setResult] = useState<Result | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const [unlocked, setUnlocked] = useState<string[]>([]);
   const [shareMessage, setShareMessage] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -93,7 +91,6 @@ export default function ResultPage() {
     }
 
     load();
-    setUnlocked(getUnlockedUniverses());
 
     return () => {
       if (pollTimer) clearInterval(pollTimer);
@@ -286,10 +283,6 @@ export default function ResultPage() {
         {/* Universe Grid */}
         <div className="grid grid-cols-2 gap-3">
           {result.universes.map((universe: Universe, i: number) => {
-            const isUnlocked = unlocked.includes(
-              `${result.id}-${universe.name}`
-            );
-
             return (
               <motion.div
                 key={i}
@@ -297,15 +290,15 @@ export default function ResultPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 * i }}
                 onClick={() => {
-                  if (isUnlocked && universe.image_url) {
+                  if (universe.image_url) {
                     router.push(`/reveal?id=${id}&start=${i}`);
                   }
                 }}
                 className={`aspect-square rounded-[16px] overflow-hidden relative ${
                   i === 0 ? "col-span-2 aspect-video" : ""
-                } ${isUnlocked && universe.image_url ? "cursor-pointer" : ""}`}
+                } ${universe.image_url ? "cursor-pointer" : ""}`}
               >
-                {isUnlocked && universe.image_url ? (
+                {universe.image_url ? (
                   <>
                     <img
                       src={universe.image_url}
@@ -332,7 +325,7 @@ export default function ResultPage() {
                       </p>
                     </div>
                   </>
-                ) : isUnlocked ? (
+                ) : (
                   <div className="w-full h-full bg-surface flex flex-col items-center justify-center">
                     <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                     <span className="text-[11px] text-text-secondary mt-2">
@@ -341,13 +334,6 @@ export default function ResultPage() {
                     <p className="text-[11px] text-text-secondary/50 mt-1 px-3 text-center truncate">
                       {universe.name}
                     </p>
-                  </div>
-                ) : (
-                  <div className="w-full h-full bg-surface flex flex-col items-center justify-center">
-                    <span className="text-[28px]">?</span>
-                    <span className="text-[11px] text-text-secondary mt-1">
-                      다시 점프로 해금
-                    </span>
                   </div>
                 )}
               </motion.div>
