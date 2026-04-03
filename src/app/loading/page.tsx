@@ -193,7 +193,7 @@ function LoadingContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="font-[family-name:var(--font-instrument)] text-2xl text-center"
+          className="font-[family-name:var(--font-instrument)] text-lg sm:text-2xl text-center"
         >
           {RIFT_MESSAGES[messageIndex]}
         </motion.p>

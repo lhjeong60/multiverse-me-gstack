@@ -102,19 +102,41 @@ function RevealContent() {
     };
   }, [resultId, router]);
 
-  // 이미지 완료 순 정렬: 이미지 있는 우주 먼저, 없는 우주 나중
+  // 이미지 완료 순 고정 정렬: 한 번 순서에 들어간 우주는 위치 안 바뀜
+  const orderedIndicesRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    if (!result) return;
+    // startIndex > 0이면 result에서 특정 우주 클릭해서 온 것 → 원래 순서 유지
+    if (startIndex > 0 && orderedIndicesRef.current.length === 0) {
+      orderedIndicesRef.current = result.universes.map((_, i) => i);
+      return;
+    }
+    // 이미지가 새로 완료된 우주만 기존 순서 뒤에 append
+    const current = new Set(orderedIndicesRef.current);
+    result.universes.forEach((u, i) => {
+      if (u.image_url && !current.has(i)) {
+        orderedIndicesRef.current = [...orderedIndicesRef.current, i];
+      }
+    });
+    // 아직 이미지 없는 우주는 맨 뒤에 (순서 유지)
+    const ordered = new Set(orderedIndicesRef.current);
+    result.universes.forEach((_, i) => {
+      if (!ordered.has(i)) {
+        // 아직 추가 안 된 우주는 뒤에 대기 (표시용)
+      }
+    });
+  }, [result, startIndex]);
+
+  // 전체 인덱스 목록: 확정된 순서 + 아직 이미지 없는 우주
   const sortedIndices = useMemo(() => {
     if (!result) return [];
-    // startIndex > 0이면 result에서 특정 우주 클릭해서 온 것 → 원래 순서 유지
-    if (startIndex > 0) return result.universes.map((_, i) => i);
-    const withImage: number[] = [];
-    const withoutImage: number[] = [];
-    result.universes.forEach((u, i) => {
-      if (u.image_url) withImage.push(i);
-      else withoutImage.push(i);
-    });
-    return [...withImage, ...withoutImage];
-  }, [result, startIndex]);
+    const ordered = new Set(orderedIndicesRef.current);
+    const remaining = result.universes
+      .map((_, i) => i)
+      .filter((i) => !ordered.has(i));
+    return [...orderedIndicesRef.current, ...remaining];
+  }, [result]);
 
   const actualIndex = sortedIndices[currentIndex] ?? 0;
   const currentUniverse = result?.universes[actualIndex];
