@@ -80,12 +80,11 @@ JSON 배열로만 응답해. 다른 텍스트 없이.
   return JSON.parse(text) as UniverseText[];
 }
 
-// 이미지 생성: 사용자 사진 + 프롬프트 → 우주 초상화
+// 이미지 생성: 사용자 사진 + 프롬프트 → 우주 초상화 (실패 시 1회 재시도)
 export async function generateUniverseImage(
   photoBase64: string,
   imagePrompt: string
 ): Promise<string> {
-  // base64에서 data:image/... 프리픽스 제거
   const base64Data = photoBase64.includes(",")
     ? photoBase64.split(",")[1]
     : photoBase64;
@@ -94,50 +93,60 @@ export async function generateUniverseImage(
     ? "image/png"
     : "image/jpeg";
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_MODEL}:generateContent?key=${GEMINI_API_KEY()}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                inlineData: {
-                  mimeType,
-                  data: base64Data,
+  async function attempt(): Promise<string> {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${IMAGE_MODEL}:generateContent?key=${GEMINI_API_KEY()}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `IMPORTANT: The attached photo is the REFERENCE FACE. The generated image MUST be based on this person's face. Study the face shape, eyes, nose, mouth, and skin tone carefully before generating.\n\nNow generate a creative portrait: ${imagePrompt}. Keep roughly 60-70% facial resemblance (face shape, skin tone, eye shape) while freely changing hairstyle, expression, age, build, and styling to fit the universe. Prioritize cinematic atmosphere. Output a single image.`,
                 },
-              },
-              {
-                text: `Reference photo provided for loose inspiration. Generate a creative portrait: ${imagePrompt}. The person should look like they COULD be the same person but transformed by this universe — keep roughly 60-70% facial resemblance (general face shape, skin tone) while freely changing hairstyle, expression, age, build, and styling to fit the universe. Prioritize cinematic atmosphere and the universe concept over strict likeness. Output a single image.`,
-              },
-            ],
+                {
+                  inlineData: {
+                    mimeType,
+                    data: base64Data,
+                  },
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            responseModalities: ["IMAGE", "TEXT"],
+            temperature: 0.8,
           },
-        ],
-        generationConfig: {
-          responseModalities: ["IMAGE", "TEXT"],
-          temperature: 0.8,
-        },
-      }),
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Gemini image gen failed: ${res.status} ${err}`);
     }
-  );
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Gemini image gen failed: ${res.status} ${err}`);
+    const data = await res.json();
+    const parts = data.candidates[0].content.parts;
+
+    const imagePart = parts.find(
+      (p: { inlineData?: { mimeType: string; data: string } }) => p.inlineData
+    );
+    if (!imagePart) {
+      throw new Error("No image returned from Gemini");
+    }
+
+    return imagePart.inlineData.data;
   }
 
-  const data = await res.json();
-  const parts = data.candidates[0].content.parts;
-
-  // 이미지 파트 찾기
-  const imagePart = parts.find(
-    (p: { inlineData?: { mimeType: string; data: string } }) => p.inlineData
-  );
-  if (!imagePart) {
-    throw new Error("No image returned from Gemini");
+  // 1회 재시도
+  try {
+    return await attempt();
+  } catch (err) {
+    console.warn("Image gen failed, retrying once:", err);
+    await new Promise((r) => setTimeout(r, 1000));
+    return await attempt();
   }
-
-  return imagePart.inlineData.data; // base64 이미지 데이터
 }
