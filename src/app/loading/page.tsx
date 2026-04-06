@@ -14,6 +14,7 @@ function LoadingContent() {
   const [error, setError] = useState<string | null>(null);
   const hasStarted = useRef(false);
   const done = useRef(false);
+  const [privacyStep, setPrivacyStep] = useState(0);
 
   const score = Number(searchParams.get("score"));
   const tierDist = {
@@ -28,6 +29,16 @@ function LoadingContent() {
       setMessageIndex((prev) => (prev + 1) % RIFT_MESSAGES.length);
     }, 2500);
     return () => clearInterval(interval);
+  }, []);
+
+  // 사진 수명주기 단계 표시
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPrivacyStep(1), 800),
+      setTimeout(() => setPrivacyStep(2), 2500),
+      setTimeout(() => setPrivacyStep(3), 5000),
+    ];
+    return () => timers.forEach(clearTimeout);
   }, []);
 
   // 프로그레스 바 (12초에 걸쳐 90%까지, 완료 시 100%)
@@ -193,6 +204,30 @@ function LoadingContent() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-3 rounded-full bg-accent/10"
           />
+        </div>
+
+        {/* 사진 수명주기 체크리스트 */}
+        <div className="flex flex-col gap-2 text-[12px]">
+          {[
+            { label: "사진 암호화 전송 완료", step: 1 },
+            { label: "AI가 얼굴 분석 중", step: 2 },
+            { label: "원본 사진 서버에서 영구 삭제", step: 3 },
+          ].map((item) => (
+            <motion.div
+              key={item.step}
+              initial={{ opacity: 0, x: -10 }}
+              animate={privacyStep >= item.step ? { opacity: 1, x: 0 } : { opacity: 0.3, x: 0 }}
+              transition={{ duration: 0.4 }}
+              className="flex items-center gap-2"
+            >
+              <span className={privacyStep >= item.step ? "text-accent3" : "text-text-secondary/30"}>
+                {privacyStep >= item.step ? "✓" : "○"}
+              </span>
+              <span className={privacyStep >= item.step ? "text-text-secondary" : "text-text-secondary/30"}>
+                {item.label}
+              </span>
+            </motion.div>
+          ))}
         </div>
 
         <motion.p

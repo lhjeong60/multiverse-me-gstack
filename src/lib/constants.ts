@@ -80,3 +80,11 @@ export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png";
 export const DAILY_LIMIT_PER_IP = 3;
 export const DAILY_LIMIT_GLOBAL = 500;
+
+// 샘플 체험용 (사전 생성된 결과 ID, 실제 생성 없이 결과 페이지로 직행)
+// TODO: Gemini로 예제 얼굴 3개 생성 후 result_id를 여기에 채울 것
+export const SAMPLE_FACES = [
+  { name: "하은", resultId: "" },
+  { name: "민준", resultId: "" },
+  { name: "서연", resultId: "" },
+];

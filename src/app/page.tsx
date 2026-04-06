@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "@/lib/constants";
+import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES, SAMPLE_FACES } from "@/lib/constants";
 import { setSession } from "@/lib/store";
 
 export default function Landing() {
@@ -197,17 +197,41 @@ export default function Landing() {
           </button>
         </motion.div>
 
-        {/* Privacy notice */}
-        <motion.p
+        {/* 샘플 체험 */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
+          className="text-center"
+        >
+          <button
+            onClick={() => {
+              const sample = SAMPLE_FACES[Math.floor(Math.random() * SAMPLE_FACES.length)];
+              if (sample.resultId) {
+                router.push(`/result/${sample.resultId}`);
+              }
+            }}
+            className="text-[13px] text-text-secondary hover:text-accent transition-colors"
+          >
+            내 사진 없이 체험하기 →
+          </button>
+        </motion.div>
+
+        {/* Privacy badge */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-[11px] text-text-secondary/60 text-center leading-relaxed"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-border/50 bg-surface/50"
         >
-          사진은 이미지 생성에만 사용되며 즉시 삭제됩니다.
-          <br />
-          결과는 30일 후 자동 삭제됩니다.
-        </motion.p>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent3 shrink-0">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span className="text-[12px] text-text-secondary">
+            사진은 생성 직후 서버에서 영구 삭제됩니다
+          </span>
+        </motion.div>
       </div>
     </main>
   );
