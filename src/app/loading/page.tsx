@@ -220,10 +220,10 @@ function LoadingContent() {
               transition={{ duration: 0.4 }}
               className="flex items-center gap-2"
             >
-              <span className={privacyStep >= item.step ? "text-accent3" : "text-text-secondary/30"}>
+              <span className={privacyStep >= item.step ? "text-accent3" : "text-text-secondary/70"}>
                 {privacyStep >= item.step ? "✓" : "○"}
               </span>
-              <span className={privacyStep >= item.step ? "text-text-secondary" : "text-text-secondary/30"}>
+              <span className={privacyStep >= item.step ? "text-text-secondary" : "text-text-secondary/70"}>
                 {item.label}
               </span>
             </motion.div>
@@ -248,7 +248,7 @@ function LoadingContent() {
             style={{ background: "linear-gradient(90deg, #ff6b35, #c4a1ff)" }}
           />
         </div>
-        <p className="text-[12px] text-text-secondary/50">{progress}%</p>
+        <p className="text-[12px] text-text-secondary">{progress}%</p>
       </div>
     </main>
   );

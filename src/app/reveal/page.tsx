@@ -280,7 +280,7 @@ function RevealContent() {
             disabled={currentIndex === 0}
             className={`px-6 py-3 border rounded-full text-[13px] transition ${
               currentIndex === 0
-                ? "border-border text-text-secondary/30 cursor-not-allowed"
+                ? "border-border text-text-secondary/70 cursor-not-allowed"
                 : "border-border text-text-secondary hover:border-text-primary hover:text-text-primary"
             }`}
           >

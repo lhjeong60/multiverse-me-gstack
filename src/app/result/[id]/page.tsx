@@ -338,7 +338,7 @@ export default function ResultPage() {
                     <span className="text-[11px] text-text-secondary mt-2">
                       이미지 생성 중...
                     </span>
-                    <p className="text-[11px] text-text-secondary/50 mt-1 px-3 text-center truncate">
+                    <p className="text-[11px] text-text-secondary mt-1 px-3 text-center truncate">
                       {universe.name}
                     </p>
                   </div>

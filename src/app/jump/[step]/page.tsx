@@ -145,7 +145,7 @@ export default function VerseJump() {
                 selected === i
                   ? "border-accent bg-accent/10 text-accent"
                   : selected !== null
-                    ? "border-border/50 text-text-secondary/50"
+                    ? "border-border/50 text-text-secondary/70"
                     : "border-border bg-surface hover:border-accent/50 text-text-primary"
               }`}
             >

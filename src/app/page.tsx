@@ -101,7 +101,7 @@ export default function Landing() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
-            className="w-full px-4 py-3.5 bg-surface border border-border rounded-lg text-[14px] text-text-primary placeholder:text-text-secondary/50 text-center outline-none focus:border-accent2 transition-colors"
+            className="w-full px-4 py-3.5 bg-surface border border-border rounded-lg text-[14px] text-text-primary placeholder:text-text-secondary/70 text-center outline-none focus:border-accent2 transition-colors"
           />
         </motion.div>
 
@@ -155,7 +155,7 @@ export default function Landing() {
                   <span className="text-accent font-medium">클릭</span>하거나
                   사진을 드래그하세요
                 </p>
-                <p className="text-[12px] text-text-secondary/60 mt-2">
+                <p className="text-[12px] text-text-secondary mt-2">
                   정면 얼굴이 잘 보이는 사진이 좋아요
                 </p>
               </motion.div>
