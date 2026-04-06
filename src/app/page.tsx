@@ -197,25 +197,26 @@ export default function Landing() {
           </button>
         </motion.div>
 
-        {/* 샘플 체험 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="text-center"
-        >
-          <button
-            onClick={() => {
-              const sample = SAMPLE_FACES[Math.floor(Math.random() * SAMPLE_FACES.length)];
-              if (sample.resultId) {
-                router.push(`/result/${sample.resultId}`);
-              }
-            }}
-            className="text-[13px] text-text-secondary hover:text-accent transition-colors"
+        {/* 샘플 체험 (resultId가 설정된 샘플이 있을 때만 표시) */}
+        {SAMPLE_FACES.some((s) => s.resultId) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+            className="text-center"
           >
-            내 사진 없이 체험하기 →
-          </button>
-        </motion.div>
+            <button
+              onClick={() => {
+                const available = SAMPLE_FACES.filter((s) => s.resultId);
+                const sample = available[Math.floor(Math.random() * available.length)];
+                router.push(`/result/${sample.resultId}`);
+              }}
+              className="text-[13px] text-text-secondary hover:text-accent transition-colors"
+            >
+              내 사진 없이 체험하기 →
+            </button>
+          </motion.div>
+        )}
 
         {/* Privacy badge */}
         <motion.div
