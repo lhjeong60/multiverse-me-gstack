@@ -23,13 +23,12 @@ function isAcceptableImage(file: File): boolean {
 async function fileToBase64(file: File): Promise<string> {
   let target: Blob = file;
   if (isHeic(file)) {
-    const heic2any = (await import("heic2any")).default;
-    const converted = await heic2any({
+    const { heicTo } = await import("heic-to/next");
+    target = await heicTo({
       blob: file,
-      toType: "image/jpeg",
+      type: "image/jpeg",
       quality: 0.92,
     });
-    target = Array.isArray(converted) ? converted[0] : converted;
   }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -61,7 +60,11 @@ export default function Landing() {
       setPhoto(base64);
       setPhotoPreview(base64);
     } catch {
-      setError("사진을 불러오지 못했습니다. 다른 사진을 선택해 주세요.");
+      setError(
+        heic
+          ? "HEIC 사진을 변환하지 못했습니다. JPG로 저장해서 다시 올려주세요."
+          : "사진을 불러오지 못했습니다. 다른 사진을 선택해 주세요."
+      );
     } finally {
       if (heic) setConverting(false);
     }
