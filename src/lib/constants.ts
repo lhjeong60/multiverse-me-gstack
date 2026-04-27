@@ -77,7 +77,8 @@ export const RIFT_MESSAGES = [
 ];
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-export const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png";
+export const ACCEPTED_IMAGE_TYPES =
+  "image/jpeg,image/png,image/heic,image/heif,.heic,.heif";
 export const DAILY_LIMIT_PER_IP = 3;
 export const DAILY_LIMIT_GLOBAL = 500;
 

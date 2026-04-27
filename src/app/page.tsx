@@ -6,49 +6,78 @@ import { useRouter } from "next/navigation";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES, SAMPLE_FACES } from "@/lib/constants";
 import { setSession } from "@/lib/store";
 
+function isHeic(file: File): boolean {
+  const name = file.name.toLowerCase();
+  return (
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    name.endsWith(".heic") ||
+    name.endsWith(".heif")
+  );
+}
+
+function isAcceptableImage(file: File): boolean {
+  return file.type.startsWith("image/") || isHeic(file);
+}
+
+async function fileToBase64(file: File): Promise<string> {
+  let target: Blob = file;
+  if (isHeic(file)) {
+    const heic2any = (await import("heic2any")).default;
+    const converted = await heic2any({
+      blob: file,
+      toType: "image/jpeg",
+      quality: 0.92,
+    });
+    target = Array.isArray(converted) ? converted[0] : converted;
+  }
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(target);
+  });
+}
+
 export default function Landing() {
   const [name, setName] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  async function loadFile(file: File) {
     if (file.size > MAX_FILE_SIZE) {
       setError("5MB 이하의 사진을 올려주세요.");
       return;
     }
-
     setError(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
+    const heic = isHeic(file);
+    if (heic) setConverting(true);
+    try {
+      const base64 = await fileToBase64(file);
       setPhoto(base64);
       setPhotoPreview(base64);
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      setError("사진을 불러오지 못했습니다. 다른 사진을 선택해 주세요.");
+    } finally {
+      if (heic) setConverting(false);
+    }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    void loadFile(file);
   }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file?.type.startsWith("image/")) {
-      if (file.size > MAX_FILE_SIZE) {
-        setError("5MB 이하의 사진을 올려주세요.");
-        return;
-      }
-      setError(null);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        setPhoto(base64);
-        setPhotoPreview(base64);
-      };
-      reader.readAsDataURL(file);
+    if (file && isAcceptableImage(file)) {
+      void loadFile(file);
     }
   }
 
@@ -143,21 +172,36 @@ export default function Landing() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !converting && fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
-                className="w-full aspect-[4/3] border border-dashed border-border bg-surface rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all hover:border-accent hover:bg-accent/[0.03] group"
+                className={`w-full aspect-[4/3] border border-dashed border-border bg-surface rounded-2xl flex flex-col items-center justify-center transition-all group ${
+                  converting
+                    ? "cursor-wait opacity-70"
+                    : "cursor-pointer hover:border-accent hover:bg-accent/[0.03]"
+                }`}
               >
-                <div className="text-5xl mb-4 opacity-30 group-hover:opacity-50 transition-opacity">
-                  📸
-                </div>
-                <p className="text-[14px] text-text-secondary">
-                  <span className="text-accent font-medium">클릭</span>하거나
-                  사진을 드래그하세요
-                </p>
-                <p className="text-[12px] text-text-secondary mt-2">
-                  정면 얼굴이 잘 보이는 사진이 좋아요
-                </p>
+                {converting ? (
+                  <>
+                    <div className="text-5xl mb-4 animate-pulse">🔄</div>
+                    <p className="text-[14px] text-text-secondary">
+                      HEIC 사진 변환 중...
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl mb-4 opacity-30 group-hover:opacity-50 transition-opacity">
+                      📸
+                    </div>
+                    <p className="text-[14px] text-text-secondary">
+                      <span className="text-accent font-medium">클릭</span>하거나
+                      사진을 드래그하세요
+                    </p>
+                    <p className="text-[12px] text-text-secondary mt-2">
+                      정면 얼굴이 잘 보이는 사진이 좋아요
+                    </p>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
